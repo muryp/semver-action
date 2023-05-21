@@ -1,0 +1,21 @@
+name: 'Semver Release'
+description: 'Automatically create Semver compliant tags or releases based on PR labels'
+author: 'Alif Prihantoro'
+
+branding:
+  icon: 'tag'
+  color: 'green'
+inputs:
+  GA:
+    description: is this on gh action
+    required: false
+    default: "true"
+outputs:
+  MSG:
+    description: 'CHANGELOG'
+  TAG:
+    description: 'New Version'
+
+runs:
+  using: 'node16'
+  main: 'app.js'
