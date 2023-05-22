@@ -94,7 +94,7 @@ function commitAndUpgradeVersion({ repoLink, lastVer, commitInfoList }) {
     const MSG = msgTag(repoLink, commitInfoList, NEW_VERSION)
     return { MSG, NEW_VERSION }
   }
-  const NEW_VERSION = `v${VER[0]}.${VER[1]}.${Number(VER[1]) + 1}${isBeta}`
+  const NEW_VERSION = `v${VER[0]}.${VER[1]}.${Number(VER[2]) + 1}${isBeta}`
   const MSG = msgTag(repoLink, commitInfoList, NEW_VERSION)
   return { MSG, NEW_VERSION, isBeta }
 }
