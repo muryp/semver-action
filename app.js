@@ -19,7 +19,7 @@ function getCommitInfo() {
 
     const COMMIT_INFO_LIST = JSON.parse(`[${updatedJsonString}]`);
     const REPO_LINK = execSync('git config --get remote.origin.url').toString().replace(/^.*github.com(\/|:)(.*).git\n/, '$2')
-    const REPO_LINK_END = `https://github.com/${REPO_LINK}`
+    const REPO_LINK_END = `https://github.com/${REPO_LINK}`.replace(/\n/gi,'')
 
     // replace some obj and add new
     COMMIT_INFO_LIST.forEach((COMMIT_INFO) => {
