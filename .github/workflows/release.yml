@@ -16,8 +16,6 @@ jobs:
       - name: Create Tag
         id: createTag
         uses: muryp/semver-action@main
-      - name: print out msg
-        run: echo "${{ steps.createTag.outputs.MSG }}"
       - name: Create Release
         id: create_release
         uses: actions/create-release@latest
