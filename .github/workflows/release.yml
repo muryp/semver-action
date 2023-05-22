@@ -13,11 +13,12 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Create Tag
+      - name: Create CHANGELOG and new version
         id: createTag
         uses: muryp/semver-action@main
       - name: Create Release
         id: create_release
+        if: ${{ steps.createTag.outputs.NEW_TAG != 'false' }}
         uses: actions/create-release@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
