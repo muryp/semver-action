@@ -70,7 +70,7 @@ ${LIST_FEAT.length == 0 ? '' : '### New Features\n' + LIST_FEAT.map(e => e).join
 ${LIST_FIX.length == 0 ? '' : '### Bug Fixed\n' + LIST_FIX.map(e => e).join('\n')}
 ${LIST_ETC.length == 0 ? '' : '### Other Change\n' + LIST_ETC.map(e => e).join('\n')}
 `
-  return CHANGE_LOG.replace(/\n/gim, '\\n')
+  return CHANGE_LOG
 }
 
 /**
