@@ -5,6 +5,9 @@ function getCommitInfo() {
     const LIST_TAG = execSync('git tag -l').toString().split('\n')
     const LAST_VER = LIST_TAG.length == 1 ? '' : LIST_TAG[LIST_TAG.length - 2]
     const GROUP_TAG = LAST_VER === '' ? '' : `${LAST_VER}..HEAD`
+    if (GROUP_TAG !== '' && execSync(`git log ${LAST_VER}..HEAD`).toString() === '') {
+      return false
+    }
     const CMD_LOG = `git log --pretty=format:'{%n "title": "%s",%n "body": "%b",%n "username": "%aN",%n "email": "%aE",%n "issueNumber": "%D",%n "date": "%cd",%n "hashCommitShort": "%h",%n "hashCommitLong": "%H"%n},' ${GROUP_TAG}`;
     const LOG_COMMIT = execSync(CMD_LOG);
     if (!LOG_COMMIT) {
@@ -18,8 +21,8 @@ function getCommitInfo() {
     }).replace(/,\s*$/, '');
 
     const COMMIT_INFO_LIST = JSON.parse(`[${updatedJsonString}]`);
-    const REPO_LINK = execSync('git config --get remote.origin.url').toString().replace(/^.*github.com(\/|:)(.*).git\n/, '$2')
-    const REPO_LINK_END = `https://github.com/${REPO_LINK}`.replace(/\n/gi,'')
+    const REPO_LINK = execSync('git config --get remote.origin.url').toString().replace(/^.*github.com(\/|:)(.*)(\.git)\n/, '$2')
+    const REPO_LINK_END = `https://github.com/${REPO_LINK}`.replace(/\n/gi, '')
 
     // replace some obj and add new
     COMMIT_INFO_LIST.forEach((COMMIT_INFO) => {
@@ -101,10 +104,17 @@ function commitAndUpgradeVersion({ repoLink, lastVer, commitInfoList }) {
 
 try {
   const commitInfoList = getCommitInfo();
+  const isGHAction = process.env.INPUT_GA
+  // cek is can upgrade version or not
+  if (!commitInfoList) {
+    if (isGHAction === 'true') {
+      return execSync(`echo "NEW_TAG=false" >> "$GITHUB_OUTPUT"`)
+    }
+    return console.log('no commit to be new version')
+  }
   const { MSG, NEW_VERSION, isBeta } = commitAndUpgradeVersion(commitInfoList)
   const BETA = isBeta === '-beta' ? 'true' : 'false'
   // cek is on github action
-  const isGHAction = process.env.INPUT_GA
   if (isGHAction === 'true') {
     execSync(`
 EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
@@ -116,7 +126,7 @@ echo "BETA=${BETA}" >> "$GITHUB_OUTPUT"
 `)
     return
   }
-  execSync(`git tag ${NEW_VERSION}`)
+  // execSync(`git tag ${NEW_VERSION}`)
 } catch (error) {
   console.error(error);
 }
