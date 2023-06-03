@@ -40,6 +40,7 @@ function getCommitInfo() {
         COMMIT_INFO.issueNumber = '';
       }
       COMMIT_INFO.linkCommit = `${REPO_LINK_END}/commit/${COMMIT_INFO.hashCommitLong}`
+      console.log( `${REPO_LINK_END}/commit/${COMMIT_INFO.hashCommitLong}`)
       COMMIT_INFO.userLink = `https://github.com/${COMMIT_INFO.username}`
     });
 
