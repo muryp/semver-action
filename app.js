@@ -2,9 +2,8 @@ const { execSync } = require('node:child_process');
 
 function getCommitInfo() {
   try {
-    const LIST_TAG = execSync('git tag -l').toString().split('\n')
-    const LAST_VER = LIST_TAG.length == 1 ? '' : LIST_TAG[LIST_TAG.length - 2]
-    const GROUP_TAG = LAST_VER === '' ? '' : `${LAST_VER}..HEAD`
+    const LAST_VER = execSync('git describe --tags --abbrev=0').toString().replace('\n','')
+    const GROUP_TAG = LAST_VER === /fatal: No names found, cannot describe anything\./i ? '' : `${LAST_VER}..HEAD`
     if (GROUP_TAG !== '' && execSync(`git log ${LAST_VER}..HEAD`).toString() === '') {
       return false
     }
@@ -21,8 +20,9 @@ function getCommitInfo() {
     }).replace(/,\s*$/, '');
 
     const COMMIT_INFO_LIST = JSON.parse(`[${updatedJsonString}]`);
-    const REPO_LINK = execSync('git config --get remote.origin.url').toString().replace(/^.*github.com(\/|:)(.*)(\.git)\n/, '$2')
+    const REPO_LINK = execSync('git config --get remote.origin.url').toString().replace(/^.*github.com(\/|:)(.*)(\.git|)(\n|)/, '$2')
     const REPO_LINK_END = `https://github.com/${REPO_LINK}`.replace(/\n/gi, '')
+    console.log(REPO_LINK_END)
 
     // replace some obj and add new
     COMMIT_INFO_LIST.forEach((COMMIT_INFO) => {
@@ -113,7 +113,7 @@ try {
     return console.log('no commit to be new version')
   }
   const { MSG, NEW_VERSION, isBeta } = commitAndUpgradeVersion(commitInfoList)
-  console.log(MSG)
+  console.log(NEW_VERSION)
   const BETA = isBeta === '-beta' ? 'true' : 'false'
   // cek is on github action
   if (isGHAction === 'true') {
