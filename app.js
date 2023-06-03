@@ -40,7 +40,6 @@ function getCommitInfo() {
         COMMIT_INFO.issueNumber = '';
       }
       COMMIT_INFO.linkCommit = `${REPO_LINK_END}/commit/${COMMIT_INFO.hashCommitLong}`
-      console.log( `${REPO_LINK_END}/commit/${COMMIT_INFO.hashCommitLong}`)
       COMMIT_INFO.userLink = `https://github.com/${COMMIT_INFO.username}`
     });
 
@@ -114,6 +113,7 @@ try {
     return console.log('no commit to be new version')
   }
   const { MSG, NEW_VERSION, isBeta } = commitAndUpgradeVersion(commitInfoList)
+  console.log(MSG)
   const BETA = isBeta === '-beta' ? 'true' : 'false'
   // cek is on github action
   if (isGHAction === 'true') {
