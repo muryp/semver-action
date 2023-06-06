@@ -87,13 +87,13 @@ function commitAndUpgradeVersion({ repoLink, lastVer, commitInfoList }) {
   const VER = lastVer === '' ? [0, 0, 0] : lastVer.replace(/v/i, '').split('.')
   const isBeta = commitInfoList.some(({ body }) => body.includes('beta:')) ? '-beta' : '';
   if (isBreakingChange) {
-    const NEW_VERSION = `v${Number(VER[0]) + 1}.${VER[1]}.${VER[2]}${isBeta}`
+    const NEW_VERSION = `v${Number(VER[0]) + 1}.0.0${isBeta}`
     const MSG = msgTag(repoLink, commitInfoList, NEW_VERSION)
     return { MSG, NEW_VERSION }
   }
   const isFeatChange = commitInfoList.some(({ title }) => title.includes('feat') || title.includes('feature'));
   if (isFeatChange) {
-    const NEW_VERSION = `v${VER[0]}.${Number(VER[1]) + 1}.${VER[2]}${isBeta}`
+    const NEW_VERSION = `v${VER[0]}.${Number(VER[1]) + 1}.0${isBeta}`
     const MSG = msgTag(repoLink, commitInfoList, NEW_VERSION)
     return { MSG, NEW_VERSION }
   }
