@@ -1,5 +1,34 @@
 const { execSync } = require('node:child_process');
 
+/**
+* @typedef {object}  jsonLogGit get json from git log
+* @property {string} title - title commit
+* @property {string} body - body commit
+* @property {string} hashCommitShort
+* @property {string} hashCommitLong
+* @property {string} date
+*/
+/**
+* @typedef {object} addMoreInfoGitLog add more info get from info log
+* @property {string} issueNumber - number issue get from title (#1)
+* @property {string} linkCommit
+* @property {string} date - transform date into new date format
+*/
+
+/**
+* @typedef {jsonLogGit & addMoreInfoGitLog} commitInfoList
+*/
+
+/**
+* @typedef {object} Commit
+* @property {string} repoLink - repo link (https...)
+* @property {string} lastVer - last ver (v1.1.1)
+* @property {commitInfoList[]} commitInfoList
+*/
+
+/**
+* @returns {Commit} get information from git log
+*/
 function getCommitInfo() {
   try {
     const LAST_VER = execSync('git describe --tags --abbrev=0').toString().replace('\n','')
@@ -7,7 +36,7 @@ function getCommitInfo() {
     if (GROUP_TAG !== '' && execSync(`git log ${LAST_VER}..HEAD`).toString() === '') {
       return false
     }
-    const CMD_LOG = `git log --pretty=format:'{%n "title": "%s",%n "body": "%b",%n "username": "%aN",%n "email": "%aE",%n "issueNumber": "%D",%n "date": "%cd",%n "hashCommitShort": "%h",%n "hashCommitLong": "%H"%n},' ${GROUP_TAG}`;
+    const CMD_LOG = `git log --pretty=format:'{%n "title": "%s",%n "body": "%b",%n "date": "%cd",%n "hashCommitShort": "%h",%n "hashCommitLong": "%H"%n},' ${GROUP_TAG}`;
     const LOG_COMMIT = execSync(CMD_LOG);
     if (!LOG_COMMIT) {
       throw new Error('No commit Log...');
@@ -19,6 +48,7 @@ function getCommitInfo() {
       return `"body": "${replacedBodyContent}"`;
     }).replace(/,\s*$/, '');
 
+    /** @type {commitInfoList[]} - convert git log into object*/
     const COMMIT_INFO_LIST = JSON.parse(`[${updatedJsonString}]`);
     const REPO_LINK = execSync('git config --get remote.origin.url').toString().replace(/^.*github.com(\/|:)(.*)(\.git|)(\n|)/, '$2')
     const REPO_LINK_END = `https://github.com/${REPO_LINK}`.replace(/\n/gi, '')
@@ -40,7 +70,6 @@ function getCommitInfo() {
         COMMIT_INFO.issueNumber = '';
       }
       COMMIT_INFO.linkCommit = `${REPO_LINK_END}/commit/${COMMIT_INFO.hashCommitLong}`
-      COMMIT_INFO.userLink = `https://github.com/${COMMIT_INFO.username}`
     });
 
     return { repoLink: REPO_LINK_END, lastVer: LAST_VER, commitInfoList: COMMIT_INFO_LIST };
@@ -49,6 +78,12 @@ function getCommitInfo() {
   }
 }
 
+/**
+* @param {string} repoLink link repo
+* @param {commitInfoList[]} listCommit
+* @param {string} version latest version
+* @returns {string} changelog
+*/
 function msgTag(repoLink, listCommit, version) {
   const LIST_FEAT = []
   const LIST_FIX = []
@@ -79,7 +114,7 @@ ${LIST_ETC.length == 0 ? '' : '### Other Change\n' + LIST_ETC.map(e => e).join('
 /**
  * Commits changes and upgrades the version (tags).
  * This function performs the necessary steps to commit the changes and upgrade the version (tags) accordingly.
- * 
+ * @param {Commit}
  * @returns {void} This function does not return any value.
  */
 function commitAndUpgradeVersion({ repoLink, lastVer, commitInfoList }) {
