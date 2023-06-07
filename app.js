@@ -89,7 +89,7 @@ function msgTag(repoLink, listCommit, version) {
   const LIST_FIX = []
   const LIST_ETC = []
   listCommit.forEach(({ title, issueNumber, linkCommit }) => {
-    const ISSUE_NUMBER = issueNumber !== '' ? `[#${issueNumber}](${repoLink}/issue/${issueNumber})` : ''
+    const ISSUE_NUMBER = issueNumber !== '' ? `[- (#${issueNumber}](${repoLink}/issue/${issueNumber}))` : ''
     const TITLE = `- [${title
       .replace(/(fix(?:ed)?|feat(?:ure)?)(:|\s:)\s/i, '')
       .replace(/(\()#(\d+)(\))/, '')}](${linkCommit})${ISSUE_NUMBER}`
