@@ -31,7 +31,7 @@ const { execSync } = require('node:child_process');
 */
 function getCommitInfo() {
   try {
-    const LAST_VER = execSync('git describe --tags --abbrev=0').toString().replace('\n','')
+    const LAST_VER = execSync('git describe --tags --abbrev=0').toString().replace('\n', '')
     const GROUP_TAG = LAST_VER === /fatal: No names found, cannot describe anything\./i ? '' : `${LAST_VER}..HEAD`
     if (GROUP_TAG !== '' && execSync(`git log ${LAST_VER}..HEAD`).toString() === '') {
       return false
@@ -90,7 +90,9 @@ function msgTag(repoLink, listCommit, version) {
   const LIST_ETC = []
   listCommit.forEach(({ title, issueNumber, linkCommit }) => {
     const ISSUE_NUMBER = issueNumber !== '' ? `[#${issueNumber}](${repoLink}/issue/${issueNumber})` : ''
-    const TITLE = `- [${title.replace(/(fix(?:ed)?|feat(?:ure)?)(:|\s:)\s/i, '')}](${linkCommit})${ISSUE_NUMBER}`
+    const TITLE = `- [${title
+      .replace(/(fix(?:ed)?|feat(?:ure)?)(:|\s:)\s/i, '')
+      .replace(/(\()#(\d+)(\)))/, '')}](${linkCommit})${ISSUE_NUMBER}`
     if (title.match(/^feat(?:ure)?/i)) {
       return LIST_FEAT.push(TITLE)
     }
