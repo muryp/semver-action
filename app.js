@@ -92,7 +92,7 @@ function msgTag(repoLink, listCommit, version) {
     const ISSUE_NUMBER = issueNumber !== '' ? `[#${issueNumber}](${repoLink}/issue/${issueNumber})` : ''
     const TITLE = `- [${title
       .replace(/(fix(?:ed)?|feat(?:ure)?)(:|\s:)\s/i, '')
-      .replace(/(\()#(\d+)(\)))/, '')}](${linkCommit})${ISSUE_NUMBER}`
+      .replace(/(\()#(\d+)(\))/, '')}](${linkCommit})${ISSUE_NUMBER}`
     if (title.match(/^feat(?:ure)?/i)) {
       return LIST_FEAT.push(TITLE)
     }
