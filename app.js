@@ -115,7 +115,7 @@ ${LIST_ETC.length == 0 ? '' : '### Other Change\n' + LIST_ETC.map(e => e).join('
  * Commits changes and upgrades the version (tags).
  * This function performs the necessary steps to commit the changes and upgrade the version (tags) accordingly.
  * @param {Commit}
- * @returns {void} This function does not return any value.
+ * @returns {{MSG:string,NEW_VERSION:string,isBeta:''|'-Beta'}} This function does not return any value.
  */
 function commitAndUpgradeVersion({ repoLink, lastVer, commitInfoList }) {
   const isBreakingChange = commitInfoList.some(({ body }) => body.includes('BREAKING_CHANGE:'));
